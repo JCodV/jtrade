@@ -1,8 +1,8 @@
-use std::env;
 use dotenv::dotenv;
-use reqwest::Error;
+use reqwest::{self, Error};
 use serde::Deserialize;
 use serde_json;
+use std::env;
 
 #[derive(Deserialize, Debug)]
 struct DailyOpenClose {
@@ -19,28 +19,47 @@ struct DailyOpenClose {
     symbol: String,
 }
 
-enum Url {
+enum PolygonUrl {
     DailyOpenClose(String),
     PreviousClose(String),
-    Trades(String)
+    Trades(String),
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let symbols: Vec<&str> = vec!["AAPL", "TSLA", "NVDA"];
-
+    // api key access
     dotenv().ok();
     let polygon_api = env::var("POLYGON_KEY");
-    let url = "https://api.polygon.io/v1/open-close/AAPL/2024-12-13?adjusted=true&apiKey=gsM8ccIfernPglYyzOUF0xewqbp19c8C";
-
     let polygon_api_key = match polygon_api {
-        Ok(value) => println!("The Polygon API key is : {:}", value),
-        Err(e) => println!("Failed to get Polygon API key!, {}", e),
+        Ok(key) => {
+            println!("The Polygon API key is : {:}", key);
+            key
+        }
+        Err(e) => {
+            println!("Failed to get Polygon API key!, {}", e);
+            e.to_string()
+        }
     };
 
-    let response = reqwest::get(&url).await?;
+    let symbols: Vec<&str> = vec!["AAPL", "TSLA", "NVDA"];
 
-    let post: DailyOpenClose = serde_json::from_str(&body).expect("Failed to deserialize json");
-    println!("Received post:\n{:#?}", post);
+    for symbol in symbols.iter() {
+        let url = daily_open_close(symbol, "2024-12-10", &polygon_api_key);
+        let response = reqwest::get(url).await?.text().await?;
+        let test: DailyOpenClose = serde_json::from_str(&response).unwrap();
+
+        println!("{:?}", test);
+    }
+
     Ok(())
+}
+
+fn daily_open_close(stock_symbol: &str, date: &str, polygon_api_key: &String) -> String {
+    let s = format!(
+        "https://api.polygon.io/v1/open-close/{}/{}?adjusted=true&apiKey={}",
+        stock_symbol, date, polygon_api_key
+    );
+
+    println!("{s}");
+    s
 }

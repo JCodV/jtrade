@@ -6,6 +6,7 @@ use std::env;
 pub mod daily_open_close;
 use daily_open_close::DailyOpenClose;
 
+pub mod main_gui;
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let api_key = get_api_key();
@@ -20,6 +21,8 @@ async fn main() -> Result<(), Error> {
         let test: DailyOpenClose = serde_json::from_str(&response).unwrap();
         println!("{:?}", test);
     }
+
+    main_gui::test();
 
     Ok(())
 }

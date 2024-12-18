@@ -1,4 +1,5 @@
 use dotenv::dotenv;
+use main_gui::JTrader;
 use reqwest::{self, Error, Url};
 use serde_json;
 use std::env;
@@ -7,6 +8,7 @@ pub mod daily_open_close;
 use daily_open_close::DailyOpenClose;
 
 pub mod main_gui;
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let api_key = get_api_key();
@@ -22,8 +24,12 @@ async fn main() -> Result<(), Error> {
         println!("{:?}", test);
     }
 
-    main_gui::test();
-
+    let native_options = eframe::NativeOptions::default();
+    let _ = eframe::run_native(
+        "My egui App",
+        native_options,
+        Box::new(|cc| Ok(Box::new(JTrader::new(cc)))),
+    );
     Ok(())
 }
 

@@ -1,8 +1,4 @@
-use dotenv::dotenv;
-use reqwest::{self, Error, Url};
 use serde::Deserialize;
-use serde_json;
-use std::env;
 
 #[derive(Deserialize, Debug)]
 pub struct DailyOpenClose {

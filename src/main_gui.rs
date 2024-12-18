@@ -1,8 +1,18 @@
-use egui;
+use eframe::egui;
 
-pub fn test() {
-    let mut ctx = egui::Context::default();
-    egui::Window::new("My Window").show(&ctx, |ui| {
-        ui.label("Hello World!");
-    });
+#[derive(Default)]
+pub struct JTrader {}
+
+impl JTrader {
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        Self::default()
+    }
+}
+
+impl eframe::App for JTrader {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("Hello World!");
+        });
+    }
 }

@@ -19,12 +19,6 @@ struct DailyOpenClose {
     symbol: String,
 }
 
-enum PolygonUrl {
-    DailyOpenClose(String),
-    PreviousClose(String),
-    Trades(String),
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     // api key access
@@ -41,6 +35,7 @@ async fn main() -> Result<(), Error> {
         }
     };
 
+    // add symbols here
     let symbols: Vec<&str> = vec!["AAPL", "TSLA", "NVDA"];
 
     for symbol in symbols.iter() {

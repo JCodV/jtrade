@@ -1,0 +1,3 @@
+[ ] fix async error for getting stock data within the ui closure in update()
+[ ] implement the math formulas for getting the increase/decrease in value of stock in given time period
+

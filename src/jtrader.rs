@@ -32,14 +32,21 @@ impl JTrader {
         JTrader::default()
     }
 
-    fn get_data_for_stock(self) {
+    async fn get_selected_stock_data(&mut self) {
         let url = daily_open_close::format_url(&self.selected_stock, "2024-12-10", &self.api_key);
-        let response = self.get_request(&url);
+
+        match self.get_request(&url).await {
+            Ok(value) => {
+                println!("{:?}", &value);
+                self.doc_stock_data.push(value);
+            }
+            Err(e) => println!("Error with sending get request for stock, {}", e),
+        }
     }
 
-    async fn get_request(self, url: &String) {
-        let response = reqwest::get(url).await.unwrap().text().await.unwrap();
-        println!("{response}");
+    async fn get_request(&self, url: &String) -> Result<DailyOpenClose, reqwest::Error> {
+        let response = reqwest::get(url).await?.json::<DailyOpenClose>().await?;
+        Ok(response)
     }
 }
 
@@ -58,12 +65,18 @@ impl eframe::App for JTrader {
             if ui.add(egui::Button::new("Run")).clicked()
                 && self.selected_stock != Ticker::UNDEFINED
             {
+                self.get_selected_stock_data();
                 println!("{:?}", self.selected_stock);
+            }
+
+            if ui.add(egui::Button::new("Test")).clicked() {
+                for stock in self.doc_stock_data.iter() {
+                    println!("{:?}", stock);
+                }
             }
         });
     }
 }
-
 
 fn get_api_key() -> String {
     dotenv().ok();

@@ -26,7 +26,7 @@ async fn main() -> Result<(), Error> {
 
     let native_options = eframe::NativeOptions::default();
     let _ = eframe::run_native(
-        "My egui App",
+        "JTrader",
         native_options,
         Box::new(|cc| Ok(Box::new(JTrader::new(cc)))),
     );
